@@ -57,24 +57,21 @@ function start() {
         type: "input",
         message: "How many units of that item would you like to buy?",
         validate: function (value) {
-          if (number_of_units(value) > stock_quantity) {
+          if (item_id.number_of_units(value) > stock_quantity) {
             return "insufficient quantity";
           }
           else connection.query(
             "INSERT INTO products SET ?",
             {
-              item_name: answer.item,
-              category: answer.category,
-              starting_bid: answer.startingBid,
-              highest_bid: answer.startingBid
+              stock_quantity: answer.number_of_units,
             },
             function (err) {
               if (err) throw err;
-              console.log("Your auction was created successfully!");
+              console.log("Congratulations on your purchase!");
               start();
             });
         }
-  });
-}
+      });
+  }
 
 }
