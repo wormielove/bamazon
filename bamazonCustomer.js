@@ -28,11 +28,13 @@ function start() {
     if (err) throw err;
     // Log all results of the SELECT statement
     console.log(res);
-    connection.end();
+    findItemID(res);
+
+    // connection.end();
   });
+}
 
-
-  function findItemID() {
+  function findItemID(inventory) {
     inquirer
       .prompt({
         name: "item_id",
@@ -40,38 +42,27 @@ function start() {
         message: "What is the ID of the product you would like to buy?"
       })
       .then(function (answer) {
-        var query = "SELECT item_id FROM products WHERE ?";
-        connection.query(query, { item_id: answer.item_id }, function (err, res) {
-          for (var i = 0; i < res.length; i++) {
-            console.log("Item ID:" + res[i].item_id);
+        for (var i = 0; i < inventory.length; i++) {
+          if (parseInt(answer.item_id) === inventory[i].item_id) {
+            numberOfUnits(inventory[i])
+            return
           }
-          start();
-        });
+        }  
       });
   }
 
-  function numberOfUnits() {
+  function numberOfUnits(product) {
     inquirer
       .prompt({
         name: "number_of_units",
         type: "input",
-        message: "How many units of that item would you like to buy?",
-        validate: function (value) {
-          if (item_id.number_of_units(value) > stock_quantity) {
-            return "insufficient quantity";
+        message: "How many units of that item would you like to buy?"
+      })
+      .then(function (answer) {
+        for (var i = 0; i < inventory.length; i++) {
+          if (parseInt(answer.number_of_units) === inventory[i].stock_quantity) {
+           
           }
-          else connection.query(
-            "INSERT INTO products SET ?",
-            {
-              stock_quantity: answer.number_of_units,
-            },
-            function (err) {
-              if (err) throw err;
-              console.log("Congratulations on your purchase!");
-              start();
-            });
-        }
+        }  
       });
   }
-
-}
